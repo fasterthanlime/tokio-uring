@@ -1,6 +1,10 @@
 use super::TcpStream;
 use crate::driver::Socket;
-use std::{io, net::SocketAddr};
+use std::{
+    io,
+    net::SocketAddr,
+    os::unix::prelude::{AsRawFd, RawFd},
+};
 
 /// A TCP socket server, listening for connections.
 ///
@@ -96,5 +100,11 @@ impl TcpListener {
             io::Error::new(io::ErrorKind::Other, "Could not get socket IP address")
         })?;
         Ok((stream, socket_addr))
+    }
+}
+
+impl AsRawFd for TcpListener {
+    fn as_raw_fd(&self) -> RawFd {
+        self.inner.as_raw_fd()
     }
 }
